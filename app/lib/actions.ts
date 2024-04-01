@@ -5,6 +5,7 @@ import { sql } from '@vercel/postgres'; // 这里需要注意
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+// 创建发票
 const FormSchema = z.object({
     id: z.string(),
     customerId: z.string(),
@@ -40,10 +41,8 @@ export async function createInvoice(formData: FormData) {
 }
 
 
-// Use Zod to update the expected types
+// 更新发票
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
- 
-// ...
  
 export async function updateInvoice(id: string, formData: FormData) {
   const { customerId, amount, status } = UpdateInvoice.parse({
@@ -64,6 +63,7 @@ export async function updateInvoice(id: string, formData: FormData) {
   redirect('/dashboard/invoices');
 }
 
+// 删除发票
 export async function deleteInvoice(id: string) {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath('/dashboard/invoices');
